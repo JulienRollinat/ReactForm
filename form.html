@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+
+        class Radio extends React.Component
+        {
+            render()
+            {
+                return (
+                    <React.Fragment>
+                        <div>
+                            <br/>
+                            <p>{this.props.question}</p>                            
+                            <label>{this.props.answerOne}</label> 
+                            <input type="radio" value={this.props.answerOne} onChange={this.props.onChangeMethod} name={this.props.name}/>
+                            <label>{this.props.answerTwo}</label>                            
+                            <input type="radio" value={this.props.answerTwo} onChange={this.props.onChangeMethod} name={this.props.name}/>                            
+                            <br/>
+                        </div>
+                    </React.Fragment>
+                );
+            }
+        }
+        
+        
+        class Select extends React.Component
+        {
+            constructor(props) {
+                super(props);
+            }
+            
+            render()
+            {
+                return (
+                    <React.Fragment>
+                        <div>                            
+                            <br/>
+                            <label>{this.props.question}</label>                            
+                            <br/>
+                            <select value={this.props.value} onChange={this.props.onChangeMethod}  name={this.props.name}>                            
+                                {this.props.choices.map((item, i) => (<option key={i} value={item}> {item}</option>))}                                
+                            </select>
+                            <br/>
+                        </div>
+                    </React.Fragment>
+                );
+            }
+        }
+        
+        class Input extends React.Component {
+
+            constructor(props) {
+                super(props);
+            }
+
+            render() {
+                return (
+                    <React.Fragment>
+                        <div>
+                            <br/>
+                            <label>{this.props.label}</label>
+                            <br/>
+                            <input value={this.props.value} type={this.props.type}  name={this.props.name} onChange={this.props.onChangeMethod} required={this.props.required}/>
+                            <br/>
+                        </div>
+                    </React.Fragment>
+                );
+            }
+        }
+
+        class Wrapper4Style extends React.Component {
+
+            constructor() {
+                super();
+                this.state = { 
+                    styleForm: 
+                        {
+                            maxWidth: "450px",
+	                        background: "#FAFAFA",
+	                        padding: "30px",
+	                        margin: "50px auto",
+	                        boxShadow: "1px 1px 25px rgba(0, 0, 0, 0.35)",
+	                        borderRadius: "10px",
+	                        border: "6px solid #305A72",
+                            textAlign:"center",
+                            fontSize:"Helvetica, sans-serif"
+                        },
+                    styleTitle:
+                    {
+                        color:"#305A72", 
+                        textAlign:"center"
+                    }
+                }
+            }
+
+            render() {
+                return (
+                  <div style={this.state.styleForm}>
+                    <h1 style={this.state.styleTitle}> QCM </h1>
+                    {this.props.children}
+                  </div>  
+                );
+            }
+        }
+
+
+
+        class Formulaire extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = {
+                    mail: '',
+                    Q1: '',
+                    Q2: '',
+                    Q3: 'MMV',
+                    point: 0,
+                    corrections: {"Q1": "Non", "Q2": "JSX est un sur-ensemble développé par Facebook", "Q3": "MVC"},
+                    message:'',
+                    mailRequired:'true'
+
+                }
+            }
+            
+            handleSubmit = (event) => {
+                event.preventDefault();
+                this.setState((state,props) => ({ message: ''}));
+                this.setState((state,props) => ({ point: 0}));
+                
+                let keysCorrections = Object.keys(this.state.corrections);
+             
+                for (let index = 0; index < keysCorrections.length; index++) 
+                {                                      
+                    if(this.state.corrections[keysCorrections[index]] == this.state[keysCorrections[index]])
+                    {
+                        this.setState((state,props) => ({point: state.point + 1}));                        
+                    }
+                    
+                }
+                this.setState((state,props) => ({ message: 'Voici votre score pour ce QCM ' + state.point + '/3'}));
+               
+            }
+
+            handleChange(event) { 
+                this.setState({ [event.target.name]: event.target.value });
+            }               
+  
+            render() {
+                return (
+                    <React.Fragment>                         
+                        <form onSubmit={this.handleSubmit}>
+                        <Wrapper4Style>
+                            <h1 style={{color:"#305A72"}}>{this.state.message}</h1> 
+                            <Input value={this.state.mail} name="mail" onChangeMethod={this.handleChange.bind(this)} label="Votre email" type="email" required={this.state.mailRequired}/> 
+                            <Radio value={this.state.Q1} name="Q1" onChangeMethod={this.handleChange.bind(this)} question="Q1: React est-il un framework ?" answerOne="Oui"  answerTwo="Non" />
+                            <Radio value={this.state.Q2} name="Q2" onChangeMethod={this.handleChange.bind(this)} question="Q2: JSX c'est quoi ?" answerOne="JSX est un langage compilé"  answerTwo="JSX est un sur-ensemble développé par Facebook"/>
+                            <Select value={this.state.Q3} name="Q3" onChangeMethod={this.handleChange.bind(this)} question="Q3: Symfony design pattern. Sélectionnez ci-dessous dans la liste la bonne définition
+caractérisant ce framework PHP" choices={["MMV","MVC", "MMVV"]}/>
+                            <Input label="Valider de vos choix" type="submit"/>
+                        </Wrapper4Style>                         
+                        </form>                        
+                    </React.Fragment>
+                );
+            }
+        }
+
+        ReactDOM.render(
+            <Formulaire />,
+            document.getElementById('root')
+        );
+
+
+    </script>
+</body>
+
+</html>
